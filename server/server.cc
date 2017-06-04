@@ -44,6 +44,20 @@ struct GameState {
 	vector<shared_ptr<Event>> events;
 };
 
+// datagram od klienta
+struct ClientDatagram {
+	uint64_t session_id;
+	int8_t turn_direction;
+	uint32_t next_expected_event_no;
+	char player_name[65];
+};
+
+
+// datagram od servera
+struct ServerDatagram {
+	uint32_t game_id;
+	vector<shared_ptr<Event>> events;
+};
 
 
 void createServerSocket() {
@@ -65,7 +79,7 @@ void createServerSocket() {
 
 int main() {
 	createServerSocket();
-	for(;;) {}
+	for (;;) {}
 
 
 }

@@ -13,10 +13,7 @@ struct Event {
 	int8_t _event_type;
 
 	Event(uint32_t event_no, int8_t event_type) :
-			_event_no(event_count++), _event_type(event_type) {}
-
-	virtual void set_len() = 0;
-	virtual void set_crc32() = 0; // ?
+		_event_no(event_count++), _event_type(event_type) {}
 };
 
 
@@ -25,29 +22,46 @@ struct NewGameEvent : public Event {
 	//lista nazw graczy - czy vector, czy tablica charow z '/0'
 	vector<string> _player_names;
 
-	NewGameEvent(uint32_t event_no, uint32_t maxx, uint32_t maxy, 
-				vector<string> player_names) :
-				Event(event_no, 1), _maxx(maxx), _maxy(maxy), 
-				_player_names(player_names) {}
-
-	//@TODO :
-	void set_len() {
-		_len = 10;
+	NewGameEvent(uint32_t event_no, uint32_t maxx, uint32_t maxy,
+	             vector<string> player_names) :
+		Event(event_no, 0), _maxx(maxx), _maxy(maxy),
+		_player_names(player_names) {
+		    //@TODO: len, crc32
+		    //len = 40 + (dlugosc player_names w bitach + '/0')
 	}
 
-	//@TODO
-	void set_crc32() {
-		_crc32 = 11;
-	}
 };
 
 struct PixelEvent : public Event {
+	int8_t _player_number;
+	uint32_t _x, _y;
+
+	PixelEvent(uint32_t event_no, int8_t player_number,
+	           uint32_t x, uint32_t y) :
+		Event(event_no, 1), _player_number(player_number),
+		_x(x), _y(y) {
+		//@TODO: len, crc32
+		_len = 96; //w bitach
+	}
 
 };
 
 struct PlayerEliminatedEvent : public Event {
+	int8_t _player_number;
+
+	PlayerEliminatedEvent(uint32_t event_no, int8_t player_number) :
+		Event(event_no, 2), _player_number(player_number) {
+		//@TODO: len, crc32
+		_len = 48;
+	}
 
 };
 
 struct GameOverEvent : public Event {
+	GameOverEvent(uint32_t event_no) : Event(event_no, 3) {
+		_len = 40;
+	}
 };
+
+
+
